@@ -1,3 +1,4 @@
 bin/
 obj/
 .dir-locals.el
+*.db
