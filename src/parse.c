@@ -99,8 +99,8 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
 
 int create_db_header(int fd, struct dbheader_t **headerOut) {
 	struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
-  int file_descriptor = fd;
 
+  printf("File descriptor: %d\n", fd);
   if(header == NULL) {
     printf("Failed to create db header\n");
     perror("calloc");
