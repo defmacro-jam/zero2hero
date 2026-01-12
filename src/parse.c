@@ -30,9 +30,11 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
     return STATUS_ERROR;
   }
 
+  int employee_count = sizeof(employees); // just trying to get a compile on github
+
   dbhdr->magic = htonl(dbhdr->magic);
   dbhdr->version = htons(dbhdr->version);
-  dbhdr->count = htons(dbhdr->count);
+  dbhdr->count = htons(employee_count);
   dbhdr->filesize = htonl(dbhdr->filesize);
 
   lseek(fd, 0, SEEK_SET);
