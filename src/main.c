@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
       return -1;
     }
 
-    if(create_db_header(dbfd, &header) == STATUS_ERROR) {
+    if(create_db_header(&header) == STATUS_ERROR) {
       printf("Failed to create database header.\n");
       return -1;
     }
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
       return -1;
     }
   }
-  
+
 
   printf("Newfile: %d\n", newfile);
   printf("Filepath: %s\n", filepath);

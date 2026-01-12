@@ -97,10 +97,9 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
   return STATUS_SUCCESS;
 }
 
-int create_db_header(int fd, struct dbheader_t **headerOut) {
+int create_db_header(struct dbheader_t **headerOut) {
 	struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
 
-  printf("File descriptor: %d\n", fd);
   if(header == NULL) {
     printf("Failed to create db header\n");
     perror("calloc");
