@@ -21,14 +21,19 @@ int main(int argc, char *argv[]) {
 	int c;
   int dbfd = -1;
   struct dbheader_t *header = NULL;
+  struct employee_t *employees = NULL;
+  char *addstring = NULL;
 
-  while ((c = getopt(argc, argv, "nf:")) != -1) {
+  while ((c = getopt(argc, argv, "nf:a:")) != -1) {
     switch(c) {
     case 'f':
       filepath = optarg;
       break;
     case 'n':
       newfile = true;
+      break;
+    case 'a':
+      addstring = optarg;
       break;
     case '?':
       printf("Unknown option -%c\n", c);
@@ -73,7 +78,23 @@ int main(int argc, char *argv[]) {
   printf("Newfile: %d\n", newfile);
   printf("Filepath: %s\n", filepath);
 
-  output_file(dbfd, header, 0);
+  if(read_employees(dbfd, header, &employees) != STATUS_SUCCESS) {
+     printf("Failed to load employees\n");
+     return 0;
+   }
+
+  if(addstring) {
+    header->count++;
+    employees = realloc(employees, header->count * sizeof(struct employee_t));
+
+    if(add_employee(header, employees, addstring) == STATUS_ERROR) {
+      printf("Failed to add employee |%s|", addstring);
+      return STATUS_ERROR;
+    }
+  }
+
+  output_file(dbfd, header, employees);
+  close(dbfd);
 
   return STATUS_SUCCESS;
 }

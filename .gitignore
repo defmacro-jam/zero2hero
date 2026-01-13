@@ -2,3 +2,6 @@ bin/
 obj/
 .dir-locals.el
 *.db
+.DS_Store
+.idea/
+.vscode/

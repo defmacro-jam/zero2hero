@@ -14,15 +14,48 @@
 void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
 
 }
+*/
+
+int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
+  if(fd < 0) {
+    printf("Got a bad file descriptor from the user\n");
+    return STATUS_ERROR;
+  }
+
+  int count = dbhdr->count;
+
+  struct employee_t *employees = calloc(count, sizeof(struct employee_t));
+  if(employees == NULL) {
+    printf("Failed to get db employees\n");
+    perror("calloc");
+
+    return STATUS_ERROR;
+  }
+
+  read(fd, employees, count * sizeof(struct employee_t));
+  int i = 0;
+  for(i = 0; i < count; i++) {
+    employees[i].hours = ntohl(employees[i].hours);
+  }
+
+  *employeesOut = employees;
+
+  return STATUS_SUCCESS;
+}
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
 
+  char *name = strtok(addstring, ",");
+  char *address = strtok(NULL, ",");
+  char *hours = strtok(NULL, ",");
+
+  strncpy(employees[dbhdr->count - 1].name, name, sizeof(employees[dbhdr->count - 1].name));
+  strncpy(employees[dbhdr->count - 1].address, address, sizeof(employees[dbhdr->count - 1].address));
+  employees[dbhdr->count - 1].hours = atoi(hours);
+
+  return STATUS_SUCCESS;
 }
 
-int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
-
-}
-*/
 
 int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) {
   if(fd < 0) {
@@ -30,15 +63,20 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
     return STATUS_ERROR;
   }
 
-  int employee_count = sizeof(employees); // just trying to get a compile on github
+  int employee_count = dbhdr->count;
+  int header_bytes = sizeof(struct dbheader_t);
+  int employee_bytes = employee_count * sizeof(struct employee_t);
+
+  dbhdr->filesize = header_bytes + employee_bytes;
 
   dbhdr->magic = htonl(dbhdr->magic);
   dbhdr->version = htons(dbhdr->version);
-  dbhdr->count = htons(employee_count);
+  dbhdr->count = htons(dbhdr->count);
   dbhdr->filesize = htonl(dbhdr->filesize);
 
   lseek(fd, 0, SEEK_SET);
   write(fd, dbhdr, sizeof(struct dbheader_t));
+  write(fd, employees, employee_count * sizeof(struct employee_t));
 
   return STATUS_SUCCESS;
 }
