@@ -11,6 +11,8 @@ void print_usage(char *argv[]) {
   printf("Usage: %s -n -f <database file>\n", argv[0]);
   printf("\t-n - create new database file\n");
   printf("\t-f - (required) path to database file\n");
+  printf("\t-a - add an employee in the form of \"Timmy H.,123 Sheshire Ln.,120\"\n");
+  printf("\t-l - list employees\n");
 
   return;
 }
@@ -18,13 +20,14 @@ void print_usage(char *argv[]) {
 int main(int argc, char *argv[]) {
   char *filepath = NULL;
   bool newfile = false;
+  bool list = false;
 	int c;
   int dbfd = -1;
   struct dbheader_t *header = NULL;
   struct employee_t *employees = NULL;
   char *addstring = NULL;
 
-  while ((c = getopt(argc, argv, "nf:a:")) != -1) {
+  while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
     switch(c) {
     case 'f':
       filepath = optarg;
@@ -34,6 +37,9 @@ int main(int argc, char *argv[]) {
       break;
     case 'a':
       addstring = optarg;
+      break;
+    case 'l':
+      list = true;
       break;
     case '?':
       printf("Unknown option -%c\n", c);
@@ -74,7 +80,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-
   printf("Newfile: %d\n", newfile);
   printf("Filepath: %s\n", filepath);
 
@@ -84,10 +89,7 @@ int main(int argc, char *argv[]) {
    }
 
   if(addstring) {
-    header->count++;
-    employees = realloc(employees, header->count * sizeof(struct employee_t));
-
-    if(add_employee(header, employees, addstring) == STATUS_ERROR) {
+    if(add_employee(header, &employees, addstring) == STATUS_ERROR) {
       printf("Failed to add employee |%s|", addstring);
       return STATUS_ERROR;
     }
