@@ -11,13 +11,17 @@
 #include "parse.h"
 
 
-/*
-  void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
-  printf("f00!\n");
+void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
+    int i = 0;
+    for(i = 0; i < dbhdr->count; i++) {
+      printf("Employee %d:\n", i);
+      printf("\tName   : %s\n", employees[i].name);
+      printf("\tAddress: %s\n", employees[i].address);
+      printf("\tHours  : %d\n", employees[i].hours);
+    }
 
   return;
 }
-*/
 
 int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
   if(fd < 0) {

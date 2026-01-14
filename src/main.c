@@ -95,6 +95,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if(list) {
+    list_employees(header, employees);
+  }
+
   output_file(dbfd, header, employees);
   close(dbfd);
 
